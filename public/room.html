@@ -10,6 +10,8 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
 
         html,
@@ -58,6 +60,112 @@
         #draw-canvas {
             touch-action: none;
             cursor: crosshair;
+        }
+
+        /* ---------------- PHONE RESPONSIVE ---------------- */
+
+        @media (max-width: 768px) {
+
+            /* Top Bar */
+
+            .h-14 {
+                height: auto;
+                min-height: 56px;
+            }
+
+            .h-14 > div,
+            .h-14 {
+                flex-wrap: wrap;
+            }
+
+            /* Hide IDE title */
+
+            .text-green-400 {
+                display: none;
+            }
+
+            /* Hide filename on phone */
+
+            #active-file,
+            #active-language {
+                font-size: 12px;
+            }
+
+            /* Sidebar */
+
+            .w-64 {
+                width: 60px;
+            }
+
+            /* Hide text labels */
+
+            #file-list span,
+            #user-list span,
+            #user-list div,
+            .uppercase {
+                display: none;
+            }
+
+            /* Keep only icons */
+
+            #newFile {
+                width: 100%;
+            }
+
+            /* Output panel */
+
+            #output-panel {
+                max-height: 180px;
+            }
+
+            #output-log {
+                font-size: 12px;
+            }
+
+            /* Chat */
+
+            #chat-messages {
+                padding: 12px;
+            }
+
+            #chat-input {
+                font-size: 16px;
+            }
+
+            /* Draw toolbar */
+
+            #draw-overlay .h-14 {
+                height: auto;
+                padding: 10px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            #draw-overlay .h-14 button,
+            #draw-overlay .h-14 input {
+                margin-bottom: 4px;
+            }
+
+            /* Smaller buttons */
+
+            button {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+                font-size: 13px;
+            }
+
+            /* Hide Copy ID */
+
+            #copyRoomId {
+                display: none;
+            }
+
+            /* Hide Save */
+
+            #saveFile {
+                display: none;
+            }
+
         }
 
     </style>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html class="scroll-smooth">
 
 <head>
 
@@ -11,20 +11,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        img,
+        svg,
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        input,
+        button {
+            font-size: 16px;
         }
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
 
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen overflow-x-hidden">
 
     <!-- Navigation -->
     <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
 
-        <div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-4 sm:px-5 h-14 flex items-center justify-between">
 
             <a href="index.html" class="flex items-center gap-3">
                 <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600 shrink-0" title="Codab IDE">
@@ -34,18 +49,20 @@
                         <path d="M14 4L10 20" stroke="#93c5fd" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <span class="text-white font-bold text-lg tracking-tight">Codab</span>
+                <span class="text-white font-bold text-lg">Codab</span>
             </a>
 
-            <div class="hidden sm:flex items-center gap-6 text-sm text-gray-400">
-                <a href="#features" class="hover:text-white transition">Features</a>
-                <a href="#languages" class="hover:text-white transition">Languages</a>
-                <a href="#get-started" class="hover:text-white transition">Get Started</a>
-            </div>
+            <!-- Hide links on phone -->
+        <div class="hidden md:flex items-center gap-5 sm:p-6 text-sm text-gray-400">
+            <a href="#features" class="hover:text-white">Features</a>
+            <a href="#languages" class="hover:text-white">Languages</a>
+            <a href="#get-started" class="hover:text-white">Get Started</a>
+        </div>
 
             <a
                 href="#get-started"
-                class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded text-sm font-medium transition">
+                class="bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-2 rounded text-sm">
+
                 Open IDE
             </a>
 
@@ -55,7 +72,7 @@
 
 
     <!-- Hero -->
-    <header class="max-w-6xl mx-auto px-5 pt-16 pb-12 text-center">
+    <header class="max-w-6xl mx-auto px-4 sm:px-5 pt-10 sm:pt-16 pb-10 sm:pb-12 text-center">
 
         <div class="flex justify-center mb-6">
             <div class="flex items-center justify-center w-20 h-20 rounded-2xl bg-blue-600 shadow-lg shadow-blue-900/40">
@@ -67,11 +84,11 @@
             </div>
         </div>
 
-        <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
             Collaborative IDE
         </h1>
 
-        <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+        <p class="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto px-2">
             Code together in real time. Run programs, chat, and sketch ideas on a shared whiteboard — all in one room.
         </p>
 
@@ -81,9 +98,9 @@
     <!-- Feature icons -->
     <section id="features" class="max-w-6xl mx-auto px-5 pb-16">
 
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-blue-500/50 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center hover:border-blue-500/50 transition">
                 <div class="w-16 h-16 rounded-2xl bg-blue-600/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
@@ -93,7 +110,7 @@
                 <p class="text-gray-500 text-sm">Sync code across users instantly with Monaco editor</p>
             </div>
 
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-green-500/50 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center hover:border-green-500/50 transition">
                 <div class="w-16 h-16 rounded-2xl bg-green-600/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
@@ -104,7 +121,7 @@
                 <p class="text-gray-500 text-sm">Compile and execute with interactive terminal input</p>
             </div>
 
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-indigo-500/50 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center hover:border-indigo-500/50 transition">
                 <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -114,7 +131,7 @@
                 <p class="text-gray-500 text-sm">Message teammates without leaving the session</p>
             </div>
 
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-amber-500/50 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center hover:border-amber-500/50 transition">
                 <div class="w-16 h-16 rounded-2xl bg-amber-600/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -124,7 +141,7 @@
                 <p class="text-gray-500 text-sm">Sketch diagrams and notes on a shared canvas</p>
             </div>
 
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-purple-500/50 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center hover:border-purple-500/50 transition">
                 <div class="w-16 h-16 rounded-2xl bg-purple-600/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -134,7 +151,7 @@
                 <p class="text-gray-500 text-sm">Join the same room and collaborate in real time</p>
             </div>
 
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-cyan-500/50 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center hover:border-cyan-500/50 transition">
                 <div class="w-16 h-16 rounded-2xl bg-cyan-600/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -156,13 +173,13 @@
 
             <h2 class="text-2xl font-bold text-white mb-6">Supported Languages</h2>
 
-            <div class="flex flex-wrap justify-center gap-4">
+            <div class="flex flex-wrap justify-center gap-3">
 
-                <span class="px-5 py-2.5 bg-gray-800 border border-gray-600 rounded-lg text-blue-400 font-mono font-medium">.cpp</span>
-                <span class="px-5 py-2.5 bg-gray-800 border border-gray-600 rounded-lg text-green-400 font-mono font-medium">.c</span>
-                <span class="px-5 py-2.5 bg-gray-800 border border-gray-600 rounded-lg text-yellow-400 font-mono font-medium">.py</span>
-                <span class="px-5 py-2.5 bg-gray-800 border border-gray-600 rounded-lg text-orange-400 font-mono font-medium">.java</span>
-                <span class="px-5 py-2.5 bg-gray-800 border border-gray-600 rounded-lg text-cyan-400 font-mono font-medium">.js</span>
+                <span class="px-5 py-3 bg-gray-800 border border-gray-600 rounded-lg text-blue-400 font-mono font-medium">.cpp</span>
+                <span class="px-5 py-3 bg-gray-800 border border-gray-600 rounded-lg text-green-400 font-mono font-medium">.c</span>
+                <span class="px-5 py-3 bg-gray-800 border border-gray-600 rounded-lg text-yellow-400 font-mono font-medium">.py</span>
+                <span class="px-5 py-3 bg-gray-800 border border-gray-600 rounded-lg text-orange-400 font-mono font-medium">.java</span>
+                <span class="px-5 py-3 bg-gray-800 border border-gray-600 rounded-lg text-cyan-400 font-mono font-medium">.js</span>
 
             </div>
 
@@ -174,7 +191,7 @@
     <!-- Get Started -->
     <section id="get-started" class="max-w-6xl mx-auto px-5 py-16">
 
-        <div class="max-w-md mx-auto bg-gray-800 border border-gray-700 rounded-2xl p-8 shadow-xl">
+        <div class="w-full max-w-md mx-auto bg-gray-800 border border-gray-700 rounded-2xl p-5 sm:p-8 shadow-xl">
 
             <div class="flex items-center gap-3 mb-6">
                 <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-600 shrink-0">
@@ -195,26 +212,26 @@
                 id="username"
                 type="text"
                 placeholder="Your name"
-                class="w-full bg-gray-900 border border-gray-600 text-white rounded-lg px-4 py-2.5 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                class="w-full bg-gray-900 border border-gray-600 text-white rounded-lg px-4 py-3 text-base" mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
 
             <label class="block text-gray-400 text-sm mb-1" for="roomId">Room ID</label>
             <input
                 id="roomId"
                 type="text"
                 placeholder="Paste room ID to join"
-                class="w-full bg-gray-900 border border-gray-600 text-white rounded-lg px-4 py-2.5 mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                class="w-full bg-gray-900 border border-gray-600 text-white rounded-lg px-4 py-3 text-base" mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
 
             <button
                 id="create"
                 type="button"
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg mb-3 transition">
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white text-base font-medium py-3 rounded-lg mb-3 transition">
                 Create Room
             </button>
 
             <button
                 id="join"
                 type="button"
-                class="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-2.5 rounded-lg transition">
+                class="w-full bg-green-600 hover:bg-green-500 text-white text-base font-medium py-3 rounded-lg transition">
                 Join Room
             </button>
 
@@ -224,7 +241,7 @@
 
 
     <!-- Footer -->
-    <footer class="border-t border-gray-800 py-6 text-center text-gray-600 text-sm">
+    <footer class="border-t border-gray-800 py-5 px-4 text-center text-gray-500 text-sm">
         Codab — Collaborative IDE for students and teams
     </footer>
 
