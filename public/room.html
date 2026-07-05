@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Collaborative Editor</title>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+        }
+
+        .hover\:bg-gray-750:hover {
+            background-color: #2d3748;
+        }
+
+        #output-resize-handle {
+            flex-shrink: 0;
+            height: 4px;
+            cursor: ns-resize;
+            background: #4a5568;
+            transition: background 0.15s;
+        }
+
+        #output-resize-handle:hover,
+        #output-resize-handle.active {
+            background: #4299e1;
+        }
+
+        #chat-messages {
+            background-color: #111827;
+        }
+
+        #chat-input:empty::before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        #chat-input:focus {
+            outline: none;
+        }
+
+        #draw-canvas {
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-gray-900 overflow-hidden">
+
+<div class="flex flex-col h-screen">
+
+    <!-- Top Bar -->
+
+    <div class="h-14 bg-gray-800 flex items-center justify-between px-5 shrink-0">
+
+        <div class="flex items-center gap-6">
+
+            <div class="flex items-center gap-3">
+
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 shrink-0" title="Codab IDE">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+                        <path d="M8 6L3 12L8 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 6L21 12L16 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 4L10 20" stroke="#93c5fd" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <button
+                    id="copyRoomId"
+                    type="button"
+                    title="Copy room ID"
+                    class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded text-sm transition">
+                    Copy ID
+                </button>
+
+            </div>
+
+            <div class="text-gray-400 text-sm">
+                File: <span id="active-file" class="text-white">—</span>
+                <span class="text-gray-600 mx-2">|</span>
+                <span id="active-language" class="text-blue-400">—</span>
+            </div>
+
+        </div>
+
+        <div class="flex items-center gap-3">
+
+            <button
+                id="saveFile"
+                class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-1.5 rounded text-sm transition">
+                Save
+            </button>
+
+            <button
+                id="runCode"
+                class="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded text-sm transition">
+                Run
+            </button>
+
+            <button
+                id="openDraw"
+                type="button"
+                class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-1.5 rounded text-sm transition">
+                Board
+            </button>
+
+            <button
+                id="openChat"
+                type="button"
+                class="relative bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded text-sm transition">
+                Chat
+                <span
+                    id="chat-badge"
+                    class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    0
+                </span>
+            </button>
+
+            <span class="text-green-400 text-sm font-medium">
+                Collaborative IDE
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="flex flex-1 min-h-0">
+
+        <!-- Left Sidebar -->
+
+        <div class="w-64 bg-gray-850 border-r border-gray-700 flex flex-col shrink-0">
+
+            <div class="px-3 py-2 border-b border-gray-700 flex items-center justify-between shrink-0">
+
+                <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                    Files
+                </div>
+
+                <button
+                    id="newFile"
+                    type="button"
+                    title="New File"
+                    class="text-gray-400 hover:text-white hover:bg-gray-700 w-6 h-6 flex items-center justify-center rounded text-lg leading-none transition">
+                    +
+                </button>
+
+            </div>
+
+            <div id="file-list" class="flex-1 overflow-y-auto min-h-0">
+                <!-- Files appear here -->
+            </div>
+
+            <div class="border-t border-gray-700 shrink-0">
+
+                <div class="px-3 py-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                    Users
+                </div>
+
+                <div id="user-list" class="px-3 pb-3 space-y-1 max-h-32 overflow-y-auto">
+                    <!-- Users appear here -->
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Editor + Output -->
+
+        <div class="flex-1 flex flex-col min-w-0 min-h-0">
+
+            <div id="editor" class="flex-1 min-h-0"></div>
+
+            <div id="output-panel" class="hidden flex flex-col border-t border-gray-700 bg-gray-850 shrink-0">
+
+                <div id="output-resize-handle" title="Drag to resize"></div>
+
+                <div class="px-4 py-2 bg-gray-800 text-gray-400 text-xs uppercase tracking-wide shrink-0">
+                    Output
+                </div>
+
+                <pre id="output-log" class="flex-1 p-4 text-green-300 font-mono text-sm whitespace-pre-wrap overflow-auto min-h-0"></pre>
+
+                <div class="border-t border-gray-700 flex items-center gap-2 px-4 py-2 shrink-0 bg-gray-900">
+                    <span class="text-blue-400 font-mono text-sm">&gt;</span>
+                    <input
+                        id="output-input"
+                        type="text"
+                        disabled
+                        placeholder="Click Run to start the program"
+                        class="flex-1 bg-transparent text-gray-200 font-mono text-sm focus:outline-none disabled:text-gray-500"
+                    />
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Full-screen Chat -->
+
+<div
+    id="chat-overlay"
+    class="hidden fixed inset-0 z-50 flex flex-col bg-gray-900"
+    translate="no"
+    data-quillbot="false"
+    data-gramm="false"
+    data-enable-grammarly="false">
+
+    <div class="h-14 bg-gray-800 border-b border-gray-700 flex items-center gap-4 px-4 shrink-0">
+
+        <button
+            id="closeChat"
+            type="button"
+            class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition"
+            title="Close chat">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2h2m3-3h4a2 2 0 012 2v1H8V7a2 2 0 012-2z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="text-white font-semibold">Room Chat</div>
+                <div class="text-gray-400 text-xs">Messages sync with everyone in this room</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-4 min-h-0"></div>
+
+    <div class="shrink-0 bg-gray-800 border-t border-gray-700 px-4 py-3">
+
+        <div class="flex items-end gap-3 max-w-4xl mx-auto">
+
+            <div
+                id="chat-input"
+                contenteditable="true"
+                role="textbox"
+                aria-label="Chat message"
+                spellcheck="false"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                data-quillbot="false"
+                data-gramm="false"
+                data-enable-grammarly="false"
+                data-placeholder="Type a message..."
+                class="flex-1 bg-gray-700 text-white rounded-2xl px-4 py-3 text-sm min-h-[44px] max-h-32 overflow-y-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            ></div>
+
+            <button
+                id="sendChat"
+                type="button"
+                class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-full shrink-0 transition"
+                title="Send message">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Full-screen Draw Board -->
+
+<div id="draw-overlay" class="hidden fixed inset-0 z-50 flex flex-col bg-gray-900">
+
+    <div class="h-14 bg-gray-800 border-b border-gray-700 flex items-center gap-3 px-4 shrink-0">
+
+        <button
+            id="closeDraw"
+            type="button"
+            class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition"
+            title="Close board">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+
+        <div class="text-white font-semibold">Draw Board</div>
+
+        <div class="flex items-center gap-2 ml-4">
+
+            <button data-draw-tool="pen" type="button" class="px-3 py-1.5 rounded text-sm text-gray-300 hover:bg-gray-700 transition bg-gray-600 text-white" title="Pen">
+                Pen
+            </button>
+
+            <button data-draw-tool="eraser" type="button" class="px-3 py-1.5 rounded text-sm text-gray-300 hover:bg-gray-700 transition" title="Eraser">
+                Eraser
+            </button>
+
+            <button data-draw-color="#ffffff" type="button" class="w-7 h-7 rounded-full bg-white ring-2 ring-white" title="White"></button>
+            <button data-draw-color="#ef4444" type="button" class="w-7 h-7 rounded-full bg-red-500" title="Red"></button>
+            <button data-draw-color="#3b82f6" type="button" class="w-7 h-7 rounded-full bg-blue-500" title="Blue"></button>
+            <button data-draw-color="#22c55e" type="button" class="w-7 h-7 rounded-full bg-green-500" title="Green"></button>
+            <button data-draw-color="#eab308" type="button" class="w-7 h-7 rounded-full bg-yellow-500" title="Yellow"></button>
+
+            <label class="flex items-center gap-2 text-gray-400 text-sm ml-2">
+                <span id="brushSizeLabel">4px</span>
+                <input id="brushSize" type="range" min="2" max="24" value="4" class="w-24 accent-amber-500">
+            </label>
+
+        </div>
+
+        <button
+            id="clearDraw"
+            type="button"
+            class="ml-auto bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-sm transition">
+            Clear
+        </button>
+
+    </div>
+
+    <div class="flex-1 min-h-0 p-2">
+        <canvas id="draw-canvas" class="w-full h-full rounded-lg bg-gray-800"></canvas>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
+
+<script src="js/editor.js"></script>
+<script src="js/languages.js"></script>
+<script src="js/fileManager.js"></script>
+<script src="js/codeSync.js"></script>
+<script src="js/saveLocal.js"></script>
+<script src="js/outputPanel.js"></script>
+<script src="js/compile.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/drawBoard.js"></script>
+<script src="js/room.js"></script>
+
+</body>
+
+</html>
