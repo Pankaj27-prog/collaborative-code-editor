@@ -11,7 +11,22 @@ const { registerDrawHandlers } = require("./server/handlers/drawHandlers");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
+const io = new Server(server, {
+    cors: {
+        origin: true,
+        credentials: true
+    },
+    transports: ["polling", "websocket"],
+    pingTimeout: 60000,
+    pingInterval: 25000
+});
+
+app.set("trust proxy", 1);
+
+app.get("/health", (req, res) => {
+    res.status(200).send("OK");
+});
 
 app.use(express.static("public"));
 
@@ -28,6 +43,8 @@ io.on("connection", (socket) => {
     registerDrawHandlers(io, socket, rooms);
 });
 
-server.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
 });
