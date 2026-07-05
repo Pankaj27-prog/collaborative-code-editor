@@ -64,113 +64,104 @@
 
         /* ---------------- PHONE RESPONSIVE ---------------- */
 
-        @media (max-width: 768px) {
+       @media (max-width:768px){
 
-            /* Top Bar */
+body{
+    overflow:hidden;
+}
 
-            .h-14 {
-                height: auto;
-                min-height: 56px;
-            }
+/* Sidebar */
 
-            .h-14 > div,
-            .h-14 {
-                flex-wrap: wrap;
-            }
+#sidebar{
+    position:fixed;
+    top:0;
+    left:-280px;
+    width:260px;
+    height:100%;
+    background:#1f2937;
+    z-index:100;
+    transition:.3s;
+}
 
-            /* Hide IDE title */
+#sidebar.open{
+    left:0;
+}
 
-            .text-green-400 {
-                display: none;
-            }
+/* Hamburger */
 
-            /* Hide filename on phone */
+#toggleSidebar{
+    display:block;
+}
 
-            #active-file,
-            #active-language {
-                font-size: 12px;
-            }
+/* Editor */
 
-            /* Sidebar */
+#editor{
+    width:100%!important;
+}
 
-            .w-64 {
-                width: 60px;
-            }
+/* Hide save */
 
-            /* Hide text labels */
+#saveFile{
+    display:none;
+}
 
-            #file-list span,
-            #user-list span,
-            #user-list div,
-            .uppercase {
-                display: none;
-            }
+#copyRoomId{
+    display:inline-flex;
+}
 
-            /* Keep only icons */
+/* Hide IDE */
 
-            #newFile {
-                width: 100%;
-            }
+.text-green-400{
+    display:none;
+}
 
-            /* Output panel */
+/* Top bar */
 
-            #output-panel {
-                max-height: 180px;
-            }
+.h-14{
 
-            #output-log {
-                font-size: 12px;
-            }
+overflow-x:auto;
 
-            /* Chat */
+white-space:nowrap;
 
-            #chat-messages {
-                padding: 12px;
-            }
+display:flex;
 
-            #chat-input {
-                font-size: 16px;
-            }
+align-items:center;
+}
 
-            /* Draw toolbar */
+/* Buttons */
 
-            #draw-overlay .h-14 {
-                height: auto;
-                padding: 10px;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
+button{
 
-            #draw-overlay .h-14 button,
-            #draw-overlay .h-14 input {
-                margin-bottom: 4px;
-            }
+    font-size:12px;
 
-            /* Smaller buttons */
+    padding:8px 10px!important;
+}
 
-            button {
-                padding-left: 10px !important;
-                padding-right: 10px !important;
-                font-size: 13px;
-            }
+/* Output */
 
-            /* Hide Copy ID */
+#output-panel{
 
-            #copyRoomId {
-                display: none;
-            }
+    max-height:180px;
+}
 
-            /* Hide Save */
+/* Draw toolbar */
 
-            #saveFile {
-                display: none;
-            }
+#draw-overlay .h-14{
 
-        }
+    overflow-x:auto;
+
+    white-space:nowrap;
+
+    flex-wrap:nowrap;
+}
+}
 
     </style>
 
 </head>
+
+</script>
+
 
 <body class="bg-gray-900 overflow-hidden">
 
@@ -182,7 +173,13 @@
 
         <div class="flex items-center gap-6">
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+
+                <button
+                    id="toggleSidebar"
+                    class="hidden md:hidden text-white text-2xl px-2">
+                    ☰
+                </button>
 
                 <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 shrink-0" title="Codab IDE">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
@@ -252,11 +249,12 @@
     </div>
 
 
-    <div class="flex flex-1 min-h-0">
-
+    <div class="flex flex-1 min-h-0 overflow-hidden">
         <!-- Left Sidebar -->
 
-        <div class="w-64 bg-gray-850 border-r border-gray-700 flex flex-col shrink-0">
+        <div
+            id="sidebar"
+            class="w-64 bg-gray-850 border-r border-gray-700 flex flex-col shrink-0">
 
             <div class="px-3 py-2 border-b border-gray-700 flex items-center justify-between shrink-0">
 
@@ -295,7 +293,7 @@
 
         <!-- Editor + Output -->
 
-        <div class="flex-1 flex flex-col min-w-0 min-h-0">
+        <div class="flex-1 flex flex-col min-w-0 min-h-0 w-full">
 
             <div id="editor" class="flex-1 min-h-0"></div>
 
@@ -469,6 +467,16 @@
 <script src="js/compile.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/drawBoard.js"></script>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("toggleSidebar");
+
+    toggle.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+    });
+</script>
+
 <script src="js/room.js"></script>
 
 </body>

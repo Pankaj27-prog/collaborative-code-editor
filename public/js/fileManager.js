@@ -97,6 +97,14 @@ const CodabFileManager = {
             roomId: this.roomId,
             fileName
         });
+
+        // Close sidebar on phones
+        if (window.innerWidth <= 768) {
+            const sidebar = document.getElementById("sidebar");
+            if (sidebar) {
+                sidebar.classList.remove("open");
+            }
+        }
     },
 
     setActiveFile(fileName, code) {
@@ -135,7 +143,16 @@ const CodabFileManager = {
             nameBtn.type = "button";
             nameBtn.className = "flex-1 text-left text-gray-300 cursor-pointer py-1 truncate";
             nameBtn.textContent = "📄 " + file;
-            nameBtn.addEventListener("click", () => this.switchToFile(file));
+            nameBtn.addEventListener("click", () => {
+
+                this.switchToFile(file);
+
+                // Close sidebar on phones after selecting a file
+                if (window.innerWidth <= 768) {
+                    document.getElementById("sidebar").classList.remove("open");
+                }
+
+            });
 
             const actions = document.createElement("div");
             actions.className = "hidden group-hover:flex items-center gap-1 ml-2";
